@@ -1,5 +1,5 @@
 
-FROM osrf/ros:humble-desktop-full
+FROM osrf/ros:jazzy-desktop-full
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
@@ -29,8 +29,8 @@ RUN echo "source /opt/ros/${ROS_DISTRO}/setup.zsh" >> /home/$USERNAME/.zshrc  # 
 RUN echo "FILE=/workspaces/RPW_ros2_ws/install/setup.zsh && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.zshrc  # Source ROS workspace
 RUN echo "export NO_AT_BRIDGE=1" >> /home/$USERNAME/.zshrc  
 RUN echo "# argcomplete for ros2 & colcon " >> /home/$USERNAME/.zshrc  
-RUN echo 'eval "$(register-python-argcomplete3 ros2)"' >> /home/$USERNAME/.zshrc  
-RUN echo 'eval "$(register-python-argcomplete3 colcon)"' >> /home/$USERNAME/.zshrc  
+RUN echo 'eval "$(register-python-argcomplete ros2)"' >> /home/$USERNAME/.zshrc  
+RUN echo 'eval "$(register-python-argcomplete colcon)"' >> /home/$USERNAME/.zshrc  
 RUN echo "cd /workspaces/RPW_ros2_ws" >> /home/$USERNAME/.zshrc  # Change default directory to home directory
 RUN echo "alias ws='cd /workspaces/RPW_ros2_ws'" >> /home/$USERNAME/.zshrc
 RUN sudo chsh -s /bin/zsh $USERNAME
