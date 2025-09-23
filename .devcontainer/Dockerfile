@@ -19,13 +19,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # General tools & libraries
-RUN apt update -y && apt install -y nano net-tools ncat zsh git curl openssh-server iproute2 libqt5serialport5-dev python3-pip python3-wheel
-
-# Robot Software dependencies
-RUN apt install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base \
-        gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools \
-        gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio libuvc-dev \
-        libgflags-dev
+RUN apt update -y && apt install -y nano net-tools ncat zsh git curl iproute2 python3-pip python3-wheel
 
 # ZSH
 USER $USERNAME
