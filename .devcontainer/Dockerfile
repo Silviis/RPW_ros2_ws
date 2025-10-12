@@ -19,11 +19,12 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # General tools & libraries
-RUN apt update -y && apt install -y nano net-tools ncat zsh git curl iproute2 python3-pip python3-wheel
+RUN apt update && apt install -y nano net-tools ncat zsh git curl iproute2 python3-pip python3-wheel
 
 # GStreamer dependencies
-RUN apt install gstreamer1.0-tools libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev
+RUN apt install -y gstreamer1.0-tools libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev gstreamer1.0-plugins-good
 
 USER $USERNAME
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/$USERNAME/.bashrc  # Source ROS installation
 RUN echo "FILE=/workspaces/RPW_ros2_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source ROS workspace
+RUN sudo chsh -s /bin/bash ${USERNAME}
