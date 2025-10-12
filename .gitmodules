@@ -1,3 +1,4 @@
-[submodule "src/IMX219-83_stereo_camera_ros"]
-	path = src/IMX219-83_stereo_camera_ros
-	url = git@github.com:Silviis/IMX219-83_stereo_camera_ros.git
+
+[submodule "src/imx219_83_stereo_camera_ros"]
+	path = src/imx219_83_stereo_camera_ros
+	url = git@github.com:Silviis/imx219_83_stereo_camera_ros.git
