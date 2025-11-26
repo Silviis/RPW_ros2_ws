@@ -16,7 +16,7 @@
 		"--volume=/mnt/wslg:/mnt/wslg",
 		"--volume=${env:HOME}/.ssh:/home/ros/.ssh/",
 		"--ipc=host",
-		"--device=/dev/dri"
+		"--privileged"
 	],
 	"containerEnv": {
 		"DISPLAY": "${localEnv:DISPLAY}", // Needed for GUI try ":0" for windows

@@ -1,0 +1,28 @@
+services:
+  ros2_cam:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ros2_stereo_cam
+    runtime: nvidia
+    privileged: true
+    network_mode: host
+    ipc: host
+
+    tty: true
+    stdin_open: true
+
+    command: sleep infinity   # <-- keeps container running
+
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=${XAUTHORITY}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - ROS_DOMAIN_ID=0
+
+    volumes:
+      - /tmp/argus_socket:/tmp/argus_socket
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev:/dev:rw
+      - ./:/workspaces/RPW_ros2_ws:rw
