@@ -1,3 +1,3 @@
 [submodule "cam_ws/src/gscam"]
 	path = cam_ws/src/gscam
-	url = git@github.com:Silviis/gscam.git
+	url = https://github.com/Silviis/gscam.git
