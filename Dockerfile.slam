@@ -19,7 +19,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 USER $USERNAME
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/$USERNAME/.bashrc  # Source ROS installation
-RUN echo "FILE=/workspaces/RPW_ros2_ws/slam_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source ROS workspace
-RUN echo "cd /workspaces/RPW_ros2_ws/slam_ws" >> /home/$USERNAME/.bashrc
+RUN echo "FILE=/workspaces/RPW_vislam/slam_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source ROS workspace
+RUN echo "cd /workspaces/RPW_vislam/slam_ws" >> /home/$USERNAME/.bashrc
 RUN sudo chsh -s /bin/bash ${USERNAME}
-WORKDIR /workspaces/RPW_ros2_ws/slam_ws
+WORKDIR /workspaces/RPW_vislam/slam_ws

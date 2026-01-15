@@ -28,7 +28,7 @@ services:
       - /dev:/dev:rw
       - /sys:/sys:ro
       - /tmp/argus_socket:/tmp/argus_socket
-      - ./:/workspaces/RPW_ros2_ws:rw
+      - ./:/workspaces/RPW_vislam:rw
 
   ros2_slam:
     build:
@@ -60,4 +60,4 @@ services:
       - /dev:/dev:rw
       - /sys:/sys:ro
       - /tmp/argus_socket:/tmp/argus_socket
-      - ./:/workspaces/RPW_ros2_ws:rw
+      - ./:/workspaces/RPW_vislam:rw

@@ -25,7 +25,7 @@
 		"PULSE_SERVER": "${localEnv:PULSE_SERVER}",
 		"LIBGL_ALWAYS_SOFTWARE": "1" // Needed for software rendering of opengl
 	},
-	"postCreateCommand": "/workspaces/RPW_ros2_ws/setup.sh",
+	"postCreateCommand": "/workspaces/RPW_vislam/setup.sh",
 	// Set *default* container specific settings.json values on container create.
 	"customizations": {
 		"vscode": {

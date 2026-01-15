@@ -26,5 +26,6 @@ RUN apt install -y gstreamer1.0-tools libgstreamer1.0-dev libgstreamer-plugins-b
 
 USER $USERNAME
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/$USERNAME/.bashrc  # Source ROS installation
-RUN echo "FILE=/workspaces/RPW_ros2_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source ROS workspace
+RUN echo "FILE=/workspaces/RPW_vislam/cam_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source cam_ws
+RUN echo "FILE=/workspaces/RPW_vislam/slam_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source slam_ws
 RUN sudo chsh -s /bin/bash ${USERNAME}
