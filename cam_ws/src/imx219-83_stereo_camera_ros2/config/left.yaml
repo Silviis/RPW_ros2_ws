@@ -1,0 +1,11 @@
+cst_camera_0:
+  ros__parameters:
+    camera_name: imx_219_left
+    camera_info_url: file:///workspaces/RPW_vislam/cam_ws/src/imx219-83_stereo_camera_ros2/config/left.ini
+    gscam_config: "nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=640, height=480, framerate=(fraction)30/1 ! nvvidconv flip-method=2 ! videoconvert"
+    frame_id: /imx_219_left_link
+    reopen_on_eof: true
+    sync_sink: true
+    use_gst_timestamps: true
+    image_encoding: mono8
+    use_sensor_data_qos: false
