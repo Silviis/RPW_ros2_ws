@@ -15,6 +15,10 @@ def generate_launch_description():
             executable='gscam_node',
             name='imx_219_left',
             parameters=[camera_params],
+            remappings=[('/camera/image_raw', '/stereo_camera/left/image_raw'),
+                        ('/camera/camera_info', '/stereo_camera/left/camera_info'),
+                        ('camera/image_raw/compressed', '/stereo_camera/left/image_raw/compressed'),
+                        ('/camera/image_raw/compressedDepth', '/stereo_camera/left/image_raw/compressedDepth')],
             output='screen'
         ),
 
@@ -23,6 +27,10 @@ def generate_launch_description():
             executable='gscam_node',
             name='imx_219_right',
             parameters=[camera_params],
+            remappings=[('/camera/image_raw', '/stereo_camera/right/image_raw'),
+                        ('/camera/camera_info', '/stereo_camera/right/camera_info'),
+                        ('camera/image_raw/compressed', '/stereo_camera/right/image_raw/compressed'),
+                        ('/camera/image_raw/compressedDepth', '/stereo_camera/right/image_raw/compressedDepth')],
             output='screen'
         ),
 
