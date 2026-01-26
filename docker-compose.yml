@@ -15,8 +15,8 @@ services:
     command: sleep infinity   # <-- keeps container running
 
     environment:
-      - DISPLAY=${DISPLAY}
-      - XAUTHORITY=${XAUTHORITY}
+      - DISPLAY=${DISPLAY:-localhost:10.0}
+      - XAUTHORITY=${XAUTHORITY:-/home/nvidia/.docker.xauth}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - GST_PLUGIN_PATH=/usr/lib/aarch64-linux-gnu/gstreamer-1.0
@@ -25,10 +25,10 @@ services:
     volumes:
       - /tmp/argus_socket:/tmp/argus_socket
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /home/nvidia/.docker.xauth:/home/nvidia/.docker.xauth:ro
       - /dev:/dev:rw
       - /sys:/sys:ro
-      - /tmp/argus_socket:/tmp/argus_socket
-      - ./:/workspaces/RPW_vislam:rw
+      - ./:/workspaces/RPW_ros2_ws:rw
 
   ros2_slam:
     build:
@@ -46,8 +46,8 @@ services:
     command: sleep infinity   # <-- keeps container running
 
     environment:
-      - DISPLAY=${DISPLAY}
-      - XAUTHORITY=${XAUTHORITY}
+      - DISPLAY=${DISPLAY:-localhost:10.0}
+      - XAUTHORITY=${XAUTHORITY:-/home/nvidia/.docker.xauth}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - ROS_DOMAIN_ID=0
@@ -57,7 +57,8 @@ services:
     volumes:
       - /tmp/argus_socket:/tmp/argus_socket
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /home/nvidia/.docker.xauth:/home/nvidia/.docker.xauth:ro
       - /dev:/dev:rw
       - /sys:/sys:ro
       - /tmp/argus_socket:/tmp/argus_socket
-      - ./:/workspaces/RPW_vislam:rw
+      - ./:/workspaces/RPW_ros2_ws:rw
