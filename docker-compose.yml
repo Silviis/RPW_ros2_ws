@@ -29,6 +29,7 @@ services:
       - /dev:/dev:rw
       - /sys:/sys:ro
       - ./:/workspaces/RPW_ros2_ws:rw
+      - /dev/i2c-8:/dev/i2c-8:rw   # I2C device for IMU
 
   ros2_slam:
     build:
