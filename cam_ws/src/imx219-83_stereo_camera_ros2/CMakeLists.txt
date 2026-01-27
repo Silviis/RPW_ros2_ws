@@ -14,20 +14,17 @@ find_package(sensor_msgs REQUIRED)
 include_directories(include launch)
 
 # Create executable
-add_executable(icm_wrapper_node
-                  src/ICM20948_wrapper.cpp
-                  src/ICM20948.c)
+add_executable(icm20948_node src/icm20948_node.cpp)
 # Link libraries
 
 # Add dependencies
-ament_target_dependencies(icm_wrapper_node
+ament_target_dependencies(icm20948_node
   rclcpp
   sensor_msgs
 )
-
 # Install executable
 install(TARGETS
-  icm_wrapper_node
+  icm20948_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
