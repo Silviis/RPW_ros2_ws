@@ -53,7 +53,7 @@ jobs:
           docker buildx build \
             --platform linux/arm64 \
             -f Dockerfile.camera \
-            -t myuser/camera:latest \
+            -t silviis/rpw-vislam-camera:latest \
             --push .
 
       - name: Build & push slam image (ARM64)
@@ -63,5 +63,5 @@ jobs:
           docker buildx build \
             --platform linux/arm64 \
             -f Dockerfile.slam \
-            -t myuser/slam:latest \
+            -t silviis/rpw-vislam-slam:latest \
             --push .
