@@ -9,6 +9,7 @@ on:
     paths:
       - 'Dockerfile.camera'
       - 'Dockerfile.slam'
+  workflow_dispatch:
 
 jobs:
   detect-changes:
