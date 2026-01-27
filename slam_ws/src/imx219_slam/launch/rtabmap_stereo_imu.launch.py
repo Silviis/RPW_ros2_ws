@@ -30,7 +30,7 @@ def generate_launch_description():
         'subscribe_imu': True,
         'approx_sync': True,
         'sync_queue_size': 10,
-        'use_sim_time': True,
+        'use_sim_time': False,
     }
 
     remappings = [
