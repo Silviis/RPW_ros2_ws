@@ -25,5 +25,4 @@ USER $USERNAME
 RUN echo "source /opt/ros/${ROS_DISTRO}/install/setup.bash" >> /home/$USERNAME/.bashrc  # Source ROS installation
 RUN echo "FILE=/workspaces/RPW_vislam/cam_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source ROS workspace
 RUN echo "cd /workspaces/RPW_vislam/cam_ws" >> /home/$USERNAME/.bashrc
-RUN sudo chsh -s /bin/bash ${USERNAME}
 WORKDIR /workspaces/RPW_vislam/cam_ws
