@@ -38,7 +38,7 @@ def generate_launch_description():
         ('right/image_rect', '/stereo_camera/right/image_raw'),
         ('left/camera_info', '/stereo_camera/left/camera_info'),
         ('right/camera_info', '/stereo_camera/right/camera_info'),
-        ('imu', '/imx219/ICM/imu'),
+        ('imu', '/imu/data_raw'),
     ]
     # ----------------------------
     # Stereo Odometry

@@ -8,6 +8,26 @@
 #include <cstring>
 #include <cmath>
 
+static constexpr uint8_t REG_BANK_SEL      = 0x7F;
+
+// Bank 0
+static constexpr uint8_t PWR_MGMT_1        = 0x06;
+static constexpr uint8_t ACCEL_XOUT_H      = 0x2D;
+
+// Bank 2
+static constexpr uint8_t GYRO_SMPLRT_DIV   = 0x00;
+static constexpr uint8_t GYRO_CONFIG_1     = 0x01;
+static constexpr uint8_t ACCEL_SMPLRT_DIV2 = 0x11;
+static constexpr uint8_t ACCEL_CONFIG      = 0x14;
+
+// Bank values (IMPORTANT)
+static constexpr uint8_t BANK_0 = 0x00;
+static constexpr uint8_t BANK_2 = 0x20;
+
+// Scaling
+constexpr float ACCEL_LSB_2G  = 16384.0f;  // LSB/g
+constexpr float GYRO_LSB_1000 = 32.8f;     // LSB/dps
+
 class Icm20948Node : public rclcpp::Node
 {
 public:
@@ -23,7 +43,9 @@ public:
     get_parameter("rate_hz", rate_hz_);
 
     openI2C();
-    configureSensor();
+    init();
+    
+    calibrateGyroBias(500);
 
     pub_ = create_publisher<sensor_msgs::msg::Imu>("imu/data_raw", 10);
 
@@ -71,63 +93,92 @@ private:
 
   /* ---------------- Sensor config ---------------- */
 
-  void selectBank(uint8_t bank)
+  void init()
   {
-    writeReg(0x7F, bank << 4);
+    // ---- Bank 0: reset & wake ----
+    writeReg(REG_BANK_SEL, BANK_0);
+    writeReg(PWR_MGMT_1, 0x80);          // Reset
+    usleep(10000);                       // >=10 ms
+    writeReg(PWR_MGMT_1, 0x01);          // Run mode (PLL)
+
+    // ---- Bank 2: configure gyro + accel ----
+    writeReg(REG_BANK_SEL, BANK_2);
+
+    // Gyro: ±1000 dps, DLPF cfg 6, enable
+    writeReg(GYRO_SMPLRT_DIV, 0x07);
+    writeReg(GYRO_CONFIG_1, 0x30 | 0x04 | 0x01);
+
+    // Accel: ±2g, DLPF cfg 6, enable
+    writeReg(ACCEL_SMPLRT_DIV2, 0x07);
+    writeReg(ACCEL_CONFIG, 0x30 | 0x00 | 0x01);
+
+    // ---- Back to Bank 0 ----
+    writeReg(REG_BANK_SEL, BANK_0);
+    usleep(100000);   // let filters settle
   }
 
-  void configureSensor()
+  void calibrateGyroBias(int samples = 500)
   {
-    selectBank(0);
-    writeReg(0x06, 0x01);  // wake up
-    usleep(10000);
+    int64_t sum_x = 0, sum_y = 0, sum_z = 0;
 
-    selectBank(2);
+    for (int i = 0; i < samples; ++i)
+    {
+      int16_t ax, ay, az, gx, gy, gz;
+      readRaw(ax, ay, az, gx, gy, gz);
 
-    // Gyro ±2000 dps, DLPF off
-    writeReg(0x01, 0x18);
-    writeReg(0x02, 0x00);
+      sum_x += gx;
+      sum_y += gy;
+      sum_z += gz;
 
-    // Accel ±16g, DLPF off
-    writeReg(0x14, 0x18);
-    writeReg(0x15, 0x00);
+      usleep(2000); // ~500 Hz sampling
+    }
 
-    // Sample rate ~200 Hz
-    writeReg(0x00, 4);   // gyro divider
-    writeReg(0x11, 4);  // accel divider
+    gyro_bias_x_ = sum_x / (float)samples;
+    gyro_bias_y_ = sum_y / (float)samples;
+    gyro_bias_z_ = sum_z / (float)samples;
 
-    selectBank(0);
+    RCLCPP_INFO(get_logger(),
+      "Gyro bias [LSB]: x=%.2f y=%.2f z=%.2f",
+      gyro_bias_x_, gyro_bias_y_, gyro_bias_z_);
   }
 
   /* ---------------- Read & publish ---------------- */
 
-  void readAndPublish()
+  void readRaw(int16_t& ax, int16_t& ay, int16_t& az,
+               int16_t& gx, int16_t& gy, int16_t& gz)
   {
     uint8_t buf[14];
+
+    // ALWAYS ensure bank 0
+    writeReg(REG_BANK_SEL, BANK_0);
+
     readRegs(0x2D, buf, 14);
 
-    int16_t ax = (buf[0] << 8) | buf[1];
-    int16_t ay = (buf[2] << 8) | buf[3];
-    int16_t az = (buf[4] << 8) | buf[5];
+    ax = (buf[0] << 8) | buf[1];
+    ay = (buf[2] << 8) | buf[3];
+    az = (buf[4] << 8) | buf[5];
 
-    int16_t gx = (buf[8] << 8) | buf[9];
-    int16_t gy = (buf[10] << 8) | buf[11];
-    int16_t gz = (buf[12] << 8) | buf[13];
+    gx = (buf[8] << 8) | buf[9];
+    gy = (buf[10] << 8) | buf[11];
+    gz = (buf[12] << 8) | buf[13];
+  }
+
+  void readAndPublish()
+  {
+    int16_t ax, ay, az, gx, gy, gz;
+    readRaw(ax, ay, az, gx, gy, gz);
 
     sensor_msgs::msg::Imu msg;
     msg.header.stamp = get_clock()->now();
     msg.header.frame_id = "imu_link";
 
-    constexpr float ACCEL_SCALE = 16.0f * 9.80665f / 32768.0f;
-    constexpr float GYRO_SCALE  = 2000.0f * M_PI / (180.0f * 32768.0f);
+    msg.linear_acceleration.x = (ax / ACCEL_LSB_2G) * 9.80665f;
+    msg.linear_acceleration.y = (ay / ACCEL_LSB_2G) * 9.80665f;
+    msg.linear_acceleration.z = (az / ACCEL_LSB_2G) * 9.80665f;
 
-    msg.linear_acceleration.x = ax * ACCEL_SCALE;
-    msg.linear_acceleration.y = ay * ACCEL_SCALE;
-    msg.linear_acceleration.z = az * ACCEL_SCALE;
-
-    msg.angular_velocity.x = gx * GYRO_SCALE;
-    msg.angular_velocity.y = gy * GYRO_SCALE;
-    msg.angular_velocity.z = gz * GYRO_SCALE;
+    msg.angular_velocity.x = ((gx - gyro_bias_x_) / GYRO_LSB_1000) * M_PI / 180.0f;
+    msg.angular_velocity.y = ((gy - gyro_bias_y_) / GYRO_LSB_1000) * M_PI / 180.0f;
+    msg.angular_velocity.z = ((gz - gyro_bias_z_) / GYRO_LSB_1000) * M_PI / 180.0f;
 
     // No orientation estimate
     msg.orientation_covariance[0] = -1;
@@ -141,6 +192,10 @@ private:
   int i2c_addr_;
   int rate_hz_;
   int fd_{-1};
+
+  float gyro_bias_x_ = 0.0f;
+  float gyro_bias_y_ = 0.0f;
+  float gyro_bias_z_ = 0.0f;
 
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
