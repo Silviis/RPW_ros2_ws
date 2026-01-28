@@ -1,0 +1,158 @@
+ros2 run camera_calibration cameracalibrator --approximate 0.1 --size 7x5 --square 0.042 right:=/stereo/right/image_raw left:=/stereo/left/image_raw
+[WARN] [1769635202.112999717] [rcl]: Found remap rule 'right:=/stereo/right/image_raw'. This syntax is deprecated. Use '--ros-args --remap right:=/stereo/right/image_raw' instead.
+[WARN] [1769635202.113015907] [rcl]: Found remap rule 'left:=/stereo/left/image_raw'. This syntax is deprecated. Use '--ros-args --remap left:=/stereo/left/image_raw' instead.
+[WARN] [1769635202.116423806] [rcl]: Found remap rule 'right:=/stereo/right/image_raw'. This syntax is deprecated. Use '--ros-args --remap right:=/stereo/right/image_raw' instead.
+[WARN] [1769635202.116435226] [rcl]: Found remap rule 'left:=/stereo/left/image_raw'. This syntax is deprecated. Use '--ros-args --remap left:=/stereo/left/image_raw' instead.
+Waiting for service camera/set_camera_info ...
+OK
+Waiting for service left_camera/set_camera_info ...
+OK
+Waiting for service right_camera/set_camera_info ...
+OK
+[WARN] [1769635217.214253113] [cameracalibrator]: No publishers available for topic /image. Using system default QoS for subscriber.
+*** Added sample 1, p_x = 0.601, p_y = 0.305, p_size = 0.361, skew = 0.127
+*** Added sample 2, p_x = 0.629, p_y = 0.182, p_size = 0.399, skew = 0.095
+*** Added sample 3, p_x = 0.651, p_y = 0.051, p_size = 0.419, skew = 0.018
+*** Added sample 4, p_x = 0.600, p_y = 0.211, p_size = 0.317, skew = 0.487
+*** Added sample 5, p_x = 0.546, p_y = 0.212, p_size = 0.285, skew = 0.364
+*** Added sample 6, p_x = 0.505, p_y = 0.172, p_size = 0.279, skew = 0.233
+*** Added sample 7, p_x = 0.568, p_y = 0.089, p_size = 0.287, skew = 0.118
+*** Added sample 8, p_x = 0.722, p_y = 0.162, p_size = 0.316, skew = 0.127
+*** Added sample 9, p_x = 0.798, p_y = 0.169, p_size = 0.319, skew = 0.353
+*** Added sample 10, p_x = 0.814, p_y = 0.172, p_size = 0.322, skew = 0.567
+*** Added sample 11, p_x = 0.797, p_y = 0.241, p_size = 0.318, skew = 0.012
+*** Added sample 12, p_x = 0.742, p_y = 0.344, p_size = 0.308, skew = 0.049
+*** Added sample 13, p_x = 0.692, p_y = 0.482, p_size = 0.287, skew = 0.058
+*** Added sample 14, p_x = 0.613, p_y = 0.501, p_size = 0.299, skew = 0.149
+*** Added sample 15, p_x = 0.592, p_y = 0.417, p_size = 0.315, skew = 0.245
+*** Added sample 16, p_x = 0.790, p_y = 0.054, p_size = 0.349, skew = 0.021
+*** Added sample 17, p_x = 0.692, p_y = 0.143, p_size = 0.360, skew = 0.272
+*** Added sample 18, p_x = 0.724, p_y = 0.269, p_size = 0.313, skew = 0.472
+*** Added sample 19, p_x = 0.753, p_y = 0.275, p_size = 0.309, skew = 0.288
+*** Added sample 20, p_x = 0.613, p_y = 0.047, p_size = 0.241, skew = 0.314
+*** Added sample 21, p_x = 0.604, p_y = 0.067, p_size = 0.237, skew = 0.010
+*** Added sample 22, p_x = 0.490, p_y = 0.158, p_size = 0.293, skew = 0.060
+*** Added sample 23, p_x = 0.635, p_y = 0.230, p_size = 0.309, skew = 0.625
+*** Added sample 24, p_x = 0.639, p_y = 0.124, p_size = 0.320, skew = 0.407
+*** Added sample 25, p_x = 0.639, p_y = 0.264, p_size = 0.321, skew = 0.029
+*** Added sample 26, p_x = 0.394, p_y = 0.073, p_size = 0.326, skew = 0.075
+*** Added sample 27, p_x = 0.378, p_y = 0.061, p_size = 0.321, skew = 0.397
+*** Added sample 28, p_x = 0.643, p_y = 0.143, p_size = 0.251, skew = 0.220
+*** Added sample 29, p_x = 0.695, p_y = 0.060, p_size = 0.322, skew = 0.715
+*** Added sample 30, p_x = 0.822, p_y = 0.242, p_size = 0.354, skew = 0.218
+*** Added sample 31, p_x = 0.436, p_y = 0.228, p_size = 0.298, skew = 0.489
+*** Added sample 32, p_x = 0.443, p_y = 0.264, p_size = 0.285, skew = 0.317
+*** Added sample 33, p_x = 0.544, p_y = 0.313, p_size = 0.306, skew = 0.451
+*** Added sample 34, p_x = 0.832, p_y = 0.367, p_size = 0.387, skew = 0.019
+*** Added sample 35, p_x = 0.855, p_y = 0.409, p_size = 0.389, skew = 0.251
+*** Added sample 36, p_x = 0.792, p_y = 0.334, p_size = 0.392, skew = 0.317
+*** Added sample 37, p_x = 0.769, p_y = 0.313, p_size = 0.360, skew = 0.541
+*** Added sample 38, p_x = 0.725, p_y = 0.309, p_size = 0.338, skew = 0.762
+*** Added sample 39, p_x = 0.692, p_y = 0.290, p_size = 0.324, skew = 0.899
+*** Added sample 40, p_x = 0.624, p_y = 0.286, p_size = 0.292, skew = 1.000
+*** Added sample 41, p_x = 0.673, p_y = 0.322, p_size = 0.362, skew = 0.359
+*** Added sample 42, p_x = 0.688, p_y = 0.363, p_size = 0.373, skew = 0.201
+*** Added sample 43, p_x = 0.654, p_y = 0.412, p_size = 0.383, skew = 0.053
+*** Added sample 44, p_x = 0.523, p_y = 0.434, p_size = 0.373, skew = 0.003
+*** Added sample 45, p_x = 0.618, p_y = 0.462, p_size = 0.317, skew = 0.373
+*** Added sample 46, p_x = 0.690, p_y = 0.445, p_size = 0.314, skew = 0.498
+*** Added sample 47, p_x = 0.723, p_y = 0.433, p_size = 0.335, skew = 0.639
+*** Added sample 48, p_x = 0.743, p_y = 0.491, p_size = 0.340, skew = 0.764
+*** Added sample 49, p_x = 0.486, p_y = 0.391, p_size = 0.326, skew = 0.522
+*** Added sample 50, p_x = 0.464, p_y = 0.426, p_size = 0.326, skew = 0.378
+*** Added sample 51, p_x = 0.506, p_y = 0.451, p_size = 0.347, skew = 0.177
+*** Added sample 52, p_x = 0.600, p_y = 0.548, p_size = 0.282, skew = 0.441
+*** Added sample 53, p_x = 0.421, p_y = 0.502, p_size = 0.297, skew = 0.618
+*** Added sample 54, p_x = 0.382, p_y = 0.515, p_size = 0.278, skew = 0.758
+*** Added sample 55, p_x = 0.414, p_y = 0.524, p_size = 0.309, skew = 0.424
+*** Added sample 56, p_x = 0.451, p_y = 0.523, p_size = 0.324, skew = 0.267
+*** Added sample 57, p_x = 0.518, p_y = 0.105, p_size = 0.382, skew = 0.208
+*** Added sample 58, p_x = 0.591, p_y = 0.053, p_size = 0.382, skew = 0.499
+*** Added sample 59, p_x = 0.652, p_y = 0.153, p_size = 0.338, skew = 0.787
+*** Added sample 60, p_x = 0.704, p_y = 0.045, p_size = 0.370, skew = 0.580
+*** Added sample 61, p_x = 0.771, p_y = 0.189, p_size = 0.412, skew = 0.178
+*** Added sample 62, p_x = 0.674, p_y = 0.290, p_size = 0.434, skew = 0.066
+*** Added sample 63, p_x = 0.716, p_y = 0.446, p_size = 0.450, skew = 0.135
+*** Added sample 64, p_x = 0.760, p_y = 0.376, p_size = 0.463, skew = 0.250
+*** Added sample 65, p_x = 0.829, p_y = 0.388, p_size = 0.512, skew = 0.166
+*** Added sample 66, p_x = 0.866, p_y = 0.387, p_size = 0.534, skew = 0.007
+*** Added sample 67, p_x = 0.464, p_y = 0.108, p_size = 0.328, skew = 0.548
+**** Calibrating ****
+mono pinhole calibration...
+mono pinhole calibration...
+stereo pinhole calibration...
+
+Left:
+D = [-0.04234122748722135, 0.18880855968707355, 0.002006628629903753, -0.0013971739138065385, 0.0]
+K = [578.1501010751381, 0.0, 317.68569393809275, 0.0, 771.8647496338674, 240.5999027049614, 0.0, 0.0, 1.0]
+R = [0.9975983137327352, -0.04044160862685306, -0.05623238150101333, 0.04015613487854974, 0.9991741948291452, -0.006197839877358274, 0.05643659512425233, 0.003924879514341359, 0.9983984705775439]
+P = [888.8157172971444, 0.0, 362.8612365722656, 0.0, 0.0, 888.8157172971444, 253.2608413696289, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+Right:
+D = [-0.07024561921564788, 0.3319612652901044, 0.0022065734197142376, -0.0014750941170449735, 0.0]
+K = [574.1164239146981, 0.0, 307.08784334191955, 0.0, 766.0760519120173, 263.69183846595286, 0.0, 0.0, 1.0]
+R = [0.9980571978575069, -0.036558356449395014, -0.050451128615127946, 0.03681351611832008, 0.9993135882336474, 0.004137318285888619, 0.05026524481018064, -0.005986563731519073, 0.9987179612978135]
+P = [888.8157172971444, 0.0, 362.8612365722656, -51.69751493799833, 0.0, 888.8157172971444, 253.2608413696289, 0.0, 0.0, 0.0, 1.0, 0.0]
+self.T = [-0.05805149019205018, 0.0021263982419197245, 0.0029344642814720778]
+self.R = [0.9999752653802423, -0.003382638226980183, -0.0061665538462971166, 0.003320155214823976, 0.9999433321073944, -0.01011479823380444, 0.006200419103849881, 0.010094074132205916, 0.9999298297732446]
+None
+# oST version 5.0 parameters
+
+
+[image]
+
+width
+640
+
+height
+480
+
+[narrow_stereo/left]
+
+camera matrix
+578.150101 0.000000 317.685694
+0.000000 771.864750 240.599903
+0.000000 0.000000 1.000000
+
+distortion
+-0.042341 0.188809 0.002007 -0.001397 0.000000
+
+rectification
+0.997598 -0.040442 -0.056232
+0.040156 0.999174 -0.006198
+0.056437 0.003925 0.998398
+
+projection
+888.815717 0.000000 362.861237 0.000000
+0.000000 888.815717 253.260841 0.000000
+0.000000 0.000000 1.000000 0.000000
+# oST version 5.0 parameters
+
+
+[image]
+
+width
+640
+
+height
+480
+
+[narrow_stereo/right]
+
+camera matrix
+574.116424 0.000000 307.087843
+0.000000 766.076052 263.691838
+0.000000 0.000000 1.000000
+
+distortion
+-0.070246 0.331961 0.002207 -0.001475 0.000000
+
+rectification
+0.998057 -0.036558 -0.050451
+0.036814 0.999314 0.004137
+0.050265 -0.005987 0.998718
+
+projection
+888.815717 0.000000 362.861237 -51.697515
+0.000000 888.815717 253.260841 0.000000
+0.000000 0.000000 1.000000 0.000000
