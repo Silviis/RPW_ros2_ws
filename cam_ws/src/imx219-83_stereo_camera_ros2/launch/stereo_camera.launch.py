@@ -2,6 +2,9 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import PathJoinSubstitution
+from launch.actions import IncludeLaunchDescription, GroupAction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import PushRosNamespace
 
 
 def generate_launch_description():
@@ -52,18 +55,19 @@ def generate_launch_description():
         # =======================
         # Stereo image processing
         # =======================
-        Node(
-            package='stereo_image_proc',
-            executable='stereo_image_proc',
-            name='stereo_image_proc',
-            remappings=[
-                ('left/image_raw',  '/stereo/left/image_raw'),
-                ('left/camera_info', '/stereo/left/camera_info'),
-                ('right/image_raw', '/stereo/right/image_raw'),
-                ('right/camera_info', '/stereo/right/camera_info'),
-            ],
-            output='screen'
-        ),
+        GroupAction([
+            PushRosNamespace('stereo'),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([
+                    PathJoinSubstitution([
+                        FindPackageShare('stereo_image_proc'),
+                        'launch',
+                        'stereo_image_proc.launch.py'
+                    ])
+                ]),
+            ),
+        ]),
+
 
         # =======================
         # IMU wrapper node
