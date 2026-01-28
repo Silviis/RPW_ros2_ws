@@ -34,10 +34,10 @@ def generate_launch_description():
     }
 
     remappings = [
-        ('left/image_rect', '/stereo_camera/left/image_raw'),
-        ('right/image_rect', '/stereo_camera/right/image_raw'),
-        ('left/camera_info', '/stereo_camera/left/camera_info'),
-        ('right/camera_info', '/stereo_camera/right/camera_info'),
+        ('left/image_rect', '/stereo/left/image_raw'),
+        ('right/image_rect', '/stereo/right/image_raw'),
+        ('left/camera_info', '/stereo/left/camera_info'),
+        ('right/camera_info', '/stereo/right/camera_info'),
         ('imu', '/imu/data_raw'),
     ]
     # ----------------------------
