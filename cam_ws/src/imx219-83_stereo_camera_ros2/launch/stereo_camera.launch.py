@@ -78,9 +78,24 @@ def generate_launch_description():
         output='screen'
     )
 
+    imu_rectifier = Node(
+        package='imu_calib',
+        executable='apply_calib_node',
+        name='imu_rectifier_node',
+        output='screen',
+        parameters=[{
+            'calib_file': PathJoinSubstitution([
+                FindPackageShare('imx219-83_stereo_camera_ros2'),
+                'config',
+                'imu_calib.yaml'
+            ])
+        }]
+    )
+
     return LaunchDescription([
         left_camera_publisher,
         right_camera_publisher,
         rectification,
-        imu_publisher
+        imu_publisher,
+        imu_rectifier
     ])
