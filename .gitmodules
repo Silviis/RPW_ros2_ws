@@ -1,3 +1,7 @@
 [submodule "cam_ws/src/gscam"]
 	path = cam_ws/src/gscam
 	url = https://github.com/Silviis/gscam.git
+[submodule "cam_ws/src/imu_calib"]
+	path = cam_ws/src/imu_calib
+	url = https://github.com/Nathan85001/imu_calib.git
+	branch = ros2
