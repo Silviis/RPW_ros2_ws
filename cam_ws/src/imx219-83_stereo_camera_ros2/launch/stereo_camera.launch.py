@@ -63,8 +63,8 @@ def generate_launch_description():
                 ])
             ]),
             launch_arguments={
-                'left_namespace': '/stereo/left/',
-                'right_namespace': '/stereo/right/',
+                'left_namespace': '/stereo/left',
+                'right_namespace': '/stereo/right',
                 'launch_image_proc': 'true',
                 'approximate_sync': 'true'
             }.items(),

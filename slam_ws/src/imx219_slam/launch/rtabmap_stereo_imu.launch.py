@@ -8,9 +8,16 @@ from launch.substitutions import PathJoinSubstitution
 
 def generate_launch_description():
 
-    # ----------------------------
-    # Static TFs
-    # ----------------------------
+    madgwick_filter = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare('imx219_slam'),
+                'launch',
+                'madgwick_imu.launch.py'
+            ])
+        )
+    )
+
     tf_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
@@ -21,21 +28,50 @@ def generate_launch_description():
         )
     )
 
-    parameters = {
+    odom_parameters = {
+        # common params
         'frame_id': 'base_link',
         'odom_frame_id': 'odom',
         'publish_tf': True,
-        'subscribe_depth': False,
-        'subscribe_stereo': True,
-        'subscribe_imu': True,
-        'approx_sync': True,
+        'tf_prefix': "",
+        'initial_pose': "",
         'sync_queue_size': 10,
+        'publish_null_when_lost': True,
+        'ground_truth_frame_id': "",
+        'ground_truth_base_frame_id': "",
+        'guess_frame_id': "",
+        'guess_min_translation': 0.0,
+        'guess_min_rotation': 0.0,
+        'config_path': "",
+        'wait_imu_to_init': False,
+        'use_sim_time': False,
+        # Stereo odom params
+        'approx_sync': True,
+        'subscribe_rgbd': False,
+    }
+
+    slam_parameters = {
+        # common params
+        'subscribe_depth': False,
+        'subscribe_scan': False,
+        'subscribe_scan_cloud': False,
+        'subscribe_stereo': True,
+        'subscribe_rgbd': False,
+        'subscribe_rgb': False,
+        'frame_id': "base_link",
+        'map_frame_id': "map",
+        'sync_queue_size': 10,
+        'publish_tf': True,
+        'tf_delay': 0.05,
+        'tf_prefix': "",
+        'approx_sync': True,
+        'odom_sensor_sync': False,
         'use_sim_time': False,
     }
 
     remappings = [
-        ('left/image_rect', '/stereo/left/image_raw'),
-        ('right/image_rect', '/stereo/right/image_raw'),
+        ('left/image_rect', '/stereo/left/image_rect'),
+        ('right/image_rect', '/stereo/right/image_rect'),
         ('left/camera_info', '/stereo/left/camera_info'),
         ('right/camera_info', '/stereo/right/camera_info'),
         ('imu', '/imu/data'),
@@ -48,13 +84,13 @@ def generate_launch_description():
         executable='stereo_odometry',
         name='stereo_odometry',
         output='screen',
-        parameters=[parameters],
+        parameters=[odom_parameters],
         remappings=remappings
     )
 
     rtabmap_viz = Node(
         package='rtabmap_viz', executable='rtabmap_viz', output='screen',
-        parameters=[parameters,
+        parameters=[odom_parameters,
                     {'odometry_node_name': "stereo_odometry"}],
         remappings=remappings
     )
@@ -67,13 +103,14 @@ def generate_launch_description():
         executable='rtabmap',
         name='rtabmap',
         output='screen',
-        parameters=[parameters],
+        parameters=[slam_parameters],
         remappings=remappings
     )
 
     return LaunchDescription([
+        madgwick_filter,
         tf_launch,
         stereo_odom,
-        rtabmap,
-        rtabmap_viz
+        # rtabmap,
+        # rtabmap_viz
     ])
