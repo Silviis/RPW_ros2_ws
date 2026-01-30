@@ -7,7 +7,7 @@ imx_219_left:
     reopen_on_eof: true
     sync_sink: true
     use_gst_timestamps: true
-    image_encoding: mono8
+    image_encoding: rgb8
     use_sensor_data_qos: false
 
 imx_219_right:
@@ -19,5 +19,5 @@ imx_219_right:
     reopen_on_eof: true
     sync_sink: true
     use_gst_timestamps: true
-    image_encoding: mono8
+    image_encoding: rgb8
     use_sensor_data_qos: false
