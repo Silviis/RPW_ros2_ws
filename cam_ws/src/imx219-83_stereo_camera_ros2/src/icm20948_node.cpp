@@ -20,13 +20,31 @@ static constexpr uint8_t GYRO_CONFIG_1     = 0x01;
 static constexpr uint8_t ACCEL_SMPLRT_DIV2 = 0x11;
 static constexpr uint8_t ACCEL_CONFIG      = 0x14;
 
+// Config
+static constexpr uint8_t GYRO_FS_SEL_250_DPS  = 0x00;
+static constexpr uint8_t GYRO_FS_SEL_500_DPS  = 0x02;
+static constexpr uint8_t GYRO_FS_SEL_1000_DPS = 0x04;
+static constexpr uint8_t GYRO_FS_SEL_2000_DPS = 0x06;
+
+static constexpr uint8_t ACCEL_FS_SEL_2G  = 0x00;
+static constexpr uint8_t ACCEL_FS_SEL_4G  = 0x02;
+static constexpr uint8_t ACCEL_FS_SEL_8G  = 0x04;
+static constexpr uint8_t ACCEL_FS_SEL_16G = 0x06;
+
 // Bank values (IMPORTANT)
 static constexpr uint8_t BANK_0 = 0x00;
 static constexpr uint8_t BANK_2 = 0x20;
 
 // Scaling
-constexpr float ACCEL_LSB_2G  = 16384.0f;  // LSB/g
-constexpr float GYRO_LSB_1000 = 32.8f;     // LSB/dps
+constexpr float ACCEL_LSB_2G   = 16384.0f;
+constexpr float ACCEL_LSB_4G   = 8192.0f;
+constexpr float ACCEL_LSB_8G   = 4096.0f;
+constexpr float ACCEL_LSB_16G  = 2048.0f;  // LSB/g
+
+constexpr float GYRO_LSB_250  = 131.0f;
+constexpr float GYRO_LSB_500  = 65.5f;
+constexpr float GYRO_LSB_1000 = 32.8f;
+constexpr float GYRO_LSB_2000 = 16.4f;     // LSB/dps
 
 class Icm20948Node : public rclcpp::Node
 {
@@ -45,7 +63,7 @@ public:
     openI2C();
     init();
     
-    calibrateGyroBias(500);
+    // calibrateGyroBias(500);
 
     pub_ = create_publisher<sensor_msgs::msg::Imu>("imu/data_raw", 10);
 
@@ -106,11 +124,11 @@ private:
 
     // Gyro: ±1000 dps, DLPF cfg 6, enable
     writeReg(GYRO_SMPLRT_DIV, 0x07);
-    writeReg(GYRO_CONFIG_1, 0x30 | 0x04 | 0x01);
+    writeReg(GYRO_CONFIG_1, 0x30 | GYRO_FS_SEL_1000_DPS | 0x01);
 
     // Accel: ±2g, DLPF cfg 6, enable
     writeReg(ACCEL_SMPLRT_DIV2, 0x07);
-    writeReg(ACCEL_CONFIG, 0x30 | 0x00 | 0x01);
+    writeReg(ACCEL_CONFIG, 0x30 | ACCEL_FS_SEL_4G | 0x01);
 
     // ---- Back to Bank 0 ----
     writeReg(REG_BANK_SEL, BANK_0);
@@ -152,15 +170,15 @@ private:
     // ALWAYS ensure bank 0
     writeReg(REG_BANK_SEL, BANK_0);
 
-    readRegs(0x2D, buf, 14);
+    readRegs(0x2D, buf, 12);
 
     ax = (buf[0] << 8) | buf[1];
     ay = (buf[2] << 8) | buf[3];
     az = (buf[4] << 8) | buf[5];
 
-    gx = (buf[8] << 8) | buf[9];
-    gy = (buf[10] << 8) | buf[11];
-    gz = (buf[12] << 8) | buf[13];
+    gx = (buf[6] << 8) | buf[7];
+    gy = (buf[8] << 8) | buf[9];
+    gz = (buf[10] << 8) | buf[11];
   }
 
   void readAndPublish()
@@ -172,9 +190,9 @@ private:
     msg.header.stamp = get_clock()->now();
     msg.header.frame_id = "imu_link";
 
-    msg.linear_acceleration.x = (ax / ACCEL_LSB_2G) * 9.80665f;
-    msg.linear_acceleration.y = (ay / ACCEL_LSB_2G) * 9.80665f;
-    msg.linear_acceleration.z = (az / ACCEL_LSB_2G) * 9.80665f;
+    msg.linear_acceleration.x = (ax / ACCEL_LSB_4G) * 9.80665f;
+    msg.linear_acceleration.y = (ay / ACCEL_LSB_4G) * 9.80665f;
+    msg.linear_acceleration.z = (az / ACCEL_LSB_4G) * 9.80665f;
 
     msg.angular_velocity.x = ((gx - gyro_bias_x_) / GYRO_LSB_1000) * M_PI / 180.0f;
     msg.angular_velocity.y = ((gy - gyro_bias_y_) / GYRO_LSB_1000) * M_PI / 180.0f;
