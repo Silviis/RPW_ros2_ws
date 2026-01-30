@@ -20,7 +20,7 @@ def generate_launch_description():
                 'use_mag': False,
                 'use_magnetic_field_msg': False,
                 'fixed_frame': 'odom',
-                'publish_tf': True,
+                'publish_tf': False,
                 'reverse_tf': False,
                 'constant_dt': 0.0,
                 'publish_debug_topics': False,
