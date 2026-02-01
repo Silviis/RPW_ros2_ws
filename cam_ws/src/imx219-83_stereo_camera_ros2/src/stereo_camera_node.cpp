@@ -130,7 +130,7 @@ public:
 
         // Create timer for publishing at ~50 Hz (20 ms)
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(20),
+            std::chrono::milliseconds(50),
             std::bind(&StereoCameraNode::timer_callback, this));
     }
     
