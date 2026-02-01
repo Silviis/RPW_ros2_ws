@@ -4,6 +4,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/msg/image.hpp>
+#include <std_msgs/msg/header.hpp>
 #include <memory>
 #include <chrono>
 
@@ -110,9 +111,15 @@ private:
         }
         rclcpp::Time right_stamp = this->now();
 
-        RCLCPP_INFO(this->get_logger(), "Time at capture cam0: %llu, cam1: %llu",
-                    static_cast<unsigned long long>(left_stamp.nanoseconds()),
-                    static_cast<unsigned long long>(right_stamp.nanoseconds()));
+        // print capture times and difference between them (in nanoseconds)
+        {
+            long long left_ns = static_cast<long long>(left_stamp.nanoseconds());
+            long long right_ns = static_cast<long long>(right_stamp.nanoseconds());
+            long long diff_ns = left_ns - right_ns;
+            if (diff_ns < 0) diff_ns = -diff_ns;
+            RCLCPP_INFO(this->get_logger(), "Capture times (ns) left: %lld, right: %lld, abs_diff: %lld",
+                        left_ns, right_ns, diff_ns);
+        }
 
 
         // Convert to ROS messages with per-image timestamps and distinct frame_ids
@@ -129,9 +136,15 @@ private:
         sensor_msgs::msg::Image::SharedPtr imageRightMsg =
             cv_bridge::CvImage(right_header, "rgb8", cam1Frame).toImageMsg();
 
-        RCLCPP_INFO(this->get_logger(), "Time at publish cam0: %llu, cam1: %llu",
-                    static_cast<unsigned long long>(this->now().nanoseconds()),
-                    static_cast<unsigned long long>(this->now().nanoseconds()));
+        // compute publish time and latencies from capture to publish (in milliseconds)
+        {
+            rclcpp::Time publish_time = this->now();
+            long long left_latency_ms = (publish_time - left_stamp).nanoseconds() / 1000000LL;
+            long long right_latency_ms = (publish_time - right_stamp).nanoseconds() / 1000000LL;
+            RCLCPP_INFO(this->get_logger(), "Publish time now (ns): %lld, latency left: %lld ms, latency right: %lld ms",
+                        static_cast<long long>(publish_time.nanoseconds()),
+                        left_latency_ms, right_latency_ms);
+        }
 
         pub_left_camera_.publish(imageLeftMsg);
         pub_right_camera_.publish(imageRightMsg);
