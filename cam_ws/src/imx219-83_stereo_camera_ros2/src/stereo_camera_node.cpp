@@ -33,11 +33,18 @@ public:
             "");
 
         // Initialize cameras
+        // Use gstreamer pipelines that ensure RGB output (matches gscam config)
         cam0_ = std::make_unique<VideoCapture>(
-            "nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=640, height=480, framerate=(fraction)30/1 ! nvvidconv flip-method=2 ! videoconvert ! video/x-raw, format=(string)RGB ! appsink",
+            "nvarguscamerasrc sensor-id=0 ! "
+            "video/x-raw(memory:NVMM), width=640, height=480, framerate=(fraction)30/1 ! "
+            "nvvidconv flip-method=2 ! videoconvert ! "
+            "video/x-raw, format=RGB ! appsink",
             cv::CAP_GSTREAMER);
         cam1_ = std::make_unique<VideoCapture>(
-            "nvarguscamerasrc sensor-id=1 ! video/x-raw(memory:NVMM), width=640, height=480, framerate=(fraction)30/1 ! nvvidconv flip-method=2 ! videoconvert ! video/x-raw, format=(string)RGB ! appsink",
+            "nvarguscamerasrc sensor-id=1 ! "
+            "video/x-raw(memory:NVMM), width=640, height=480, framerate=(fraction)30/1 ! "
+            "nvvidconv flip-method=2 ! videoconvert ! "
+            "video/x-raw, format=RGB ! appsink",
             cv::CAP_GSTREAMER);
 
         if (!cam0_->isOpened())
