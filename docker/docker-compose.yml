@@ -1,8 +1,6 @@
 services:
   ros2_cam:
-    build:
-      context: .
-      dockerfile: Dockerfile.camera
+    image: silviis/rpw-vislam-camera:latest   # pull from Docker Hub
     container_name: ros2_stereo_cam
     runtime: nvidia
     privileged: true
@@ -33,9 +31,7 @@ services:
       - 113
 
   ros2_slam:
-    build:
-      context: .
-      dockerfile: Dockerfile.slam
+    image: silviis/rpw-vislam-slam:latest   # pull from Docker Hub
     container_name: ros2_slam
     runtime: nvidia
     privileged: true
