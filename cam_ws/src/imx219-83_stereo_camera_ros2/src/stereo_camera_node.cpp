@@ -184,16 +184,6 @@ private:
         }
         rclcpp::Time right_stamp = this->now();
 
-        // print capture times and difference between them (in nanoseconds)
-        {
-            long long left_ns = static_cast<long long>(left_stamp.nanoseconds());
-            long long right_ns = static_cast<long long>(right_stamp.nanoseconds());
-            long long diff_ns = left_ns - right_ns;
-            RCLCPP_INFO(this->get_logger(), "Capture times (ns) left: %lld, right: %lld, diff (left - right): %lld",
-                        left_ns, right_ns, diff_ns);
-        }
-
-
         // Convert to ROS messages with per-image timestamps and distinct frame_ids
         std_msgs::msg::Header left_header;
         left_header.stamp = left_stamp;
@@ -219,16 +209,6 @@ private:
         camera_info_left_.header.frame_id = left_header.frame_id;
         camera_info_right_.header.stamp = right_stamp;
         camera_info_right_.header.frame_id = right_header.frame_id;
-
-        // compute publish time and latencies from capture to publish (in milliseconds)
-        {
-            rclcpp::Time publish_time = this->now();
-            long long left_latency_ms = (publish_time - left_stamp).nanoseconds() / 1000000LL;
-            long long right_latency_ms = (publish_time - right_stamp).nanoseconds() / 1000000LL;
-            RCLCPP_INFO(this->get_logger(), "Publish time now (ns): %lld, latency left: %lld ms, latency right: %lld ms",
-                        static_cast<long long>(publish_time.nanoseconds()),
-                        left_latency_ms, right_latency_ms);
-        }
 
         // publish images and camera_info
         pub_left_camera_.publish(imageLeftMsg);
