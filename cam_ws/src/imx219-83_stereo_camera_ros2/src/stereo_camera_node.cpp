@@ -40,7 +40,7 @@ public:
             "video/x-raw, format=BGRx ! "
             "videoconvert ! "
             "video/x-raw, format=BGR ! "
-            "appsink drop=true sync=false",
+            "appsink drop=true sync=true",
             cv::CAP_GSTREAMER);
 
         cam1_ = std::make_unique<cv::VideoCapture>(
@@ -50,7 +50,7 @@ public:
             "video/x-raw, format=BGRx ! "
             "videoconvert ! "
             "video/x-raw, format=BGR ! "
-            "appsink drop=true sync=false",
+            "appsink drop=true sync=true",
             cv::CAP_GSTREAMER);
 
 
