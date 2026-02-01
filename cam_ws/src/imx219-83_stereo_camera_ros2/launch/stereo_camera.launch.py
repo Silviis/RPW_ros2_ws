@@ -14,11 +14,27 @@ def generate_launch_description():
         'stereo_camera.yaml'
     ])
 
+    # paths to left/right ini files (passed as params to the stereo node)
+    left_ini_path = PathJoinSubstitution([
+        FindPackageShare('imx219-83_stereo_camera_ros2'),
+        'config',
+        'left.ini'
+    ])
+    right_ini_path = PathJoinSubstitution([
+        FindPackageShare('imx219-83_stereo_camera_ros2'),
+        'config',
+        'right.ini'
+    ])
+
     stereo_cam_publisher = Node(
         package='imx219-83_stereo_camera_ros2',
         executable='stereo_camera_node',
         name='stereo_camera_node',
-        output='screen'
+        output='screen',
+        parameters=[{
+            'left_ini': left_ini_path,
+            'right_ini': right_ini_path
+        }]
     )
 
     # =======================
