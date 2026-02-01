@@ -118,7 +118,7 @@ def generate_launch_description():
     return LaunchDescription([
         # left_camera_publisher,
         # right_camera_publisher,
-        # rectification,
+        rectification,
         stereo_cam_publisher,
         imu_publisher,
         imu_rectifier
