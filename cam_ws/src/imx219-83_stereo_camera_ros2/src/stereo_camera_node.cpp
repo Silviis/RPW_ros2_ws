@@ -94,28 +94,44 @@ private:
         Mat cam0Frame;
         Mat cam1Frame;
 
-        if (!cam0_->read(cam0Frame) || !cam1_->read(cam1Frame))
+        // Read left camera and record its capture time immediately after read
+        if (!cam0_->read(cam0Frame))
         {
-            RCLCPP_WARN(this->get_logger(), "No frame info");
+            RCLCPP_WARN(this->get_logger(), "No frame from cam0");
             return;
         }
+        rclcpp::Time left_stamp = this->now();
 
-        RCLCPP_INFO(this->get_logger(), "Time at capture: %ld",
-                    static_cast<long>(this->now().nanoseconds()));
+        // Read right camera and record its capture time immediately after read
+        if (!cam1_->read(cam1Frame))
+        {
+            RCLCPP_WARN(this->get_logger(), "No frame from cam1");
+            return;
+        }
+        rclcpp::Time right_stamp = this->now();
+
+        RCLCPP_INFO(this->get_logger(), "Time at capture cam0: %llu, cam1: %llu",
+                    static_cast<unsigned long long>(left_stamp.nanoseconds()),
+                    static_cast<unsigned long long>(right_stamp.nanoseconds()));
 
 
-        // Convert to ROS message
-        std_msgs::msg::Header header;
-        header.stamp = this->now();
-        header.frame_id = "camera_frame";
+        // Convert to ROS messages with per-image timestamps and distinct frame_ids
+        std_msgs::msg::Header left_header;
+        left_header.stamp = left_stamp;
+        left_header.frame_id = "imx_219_left_link";
+
+        std_msgs::msg::Header right_header;
+        right_header.stamp = right_stamp;
+        right_header.frame_id = "imx_219_right_link";
 
         sensor_msgs::msg::Image::SharedPtr imageLeftMsg =
-            cv_bridge::CvImage(header, "rgb8", cam0Frame).toImageMsg();
+            cv_bridge::CvImage(left_header, "rgb8", cam0Frame).toImageMsg();
         sensor_msgs::msg::Image::SharedPtr imageRightMsg =
-            cv_bridge::CvImage(header, "rgb8", cam1Frame).toImageMsg();
+            cv_bridge::CvImage(right_header, "rgb8", cam1Frame).toImageMsg();
 
-        RCLCPP_INFO(this->get_logger(), "Time at publish: %ld",
-                    static_cast<long>(this->now().nanoseconds()));
+        RCLCPP_INFO(this->get_logger(), "Time at publish cam0: %llu, cam1: %llu",
+                    static_cast<unsigned long long>(this->now().nanoseconds()),
+                    static_cast<unsigned long long>(this->now().nanoseconds()));
 
         pub_left_camera_.publish(imageLeftMsg);
         pub_right_camera_.publish(imageRightMsg);
