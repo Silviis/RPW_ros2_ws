@@ -125,5 +125,5 @@ def generate_launch_description():
         rectification,
         stereo_cam_publisher,
         imu_publisher,
-        imu_rectifier
+        # imu_rectifier
     ])
