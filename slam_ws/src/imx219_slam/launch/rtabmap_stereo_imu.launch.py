@@ -35,7 +35,7 @@ def generate_launch_description():
         'publish_tf': True,
         'tf_prefix': "",
         'initial_pose': "",
-        'sync_queue_size': 10,
+        'sync_queue_size': 50,
         'publish_null_when_lost': True,
         'ground_truth_frame_id': "",
         'ground_truth_base_frame_id': "",
@@ -47,6 +47,7 @@ def generate_launch_description():
         'use_sim_time': False,
         # Stereo odom params
         'approx_sync': True,
+        'approx_sync_max_interval': 0.03,
         'subscribe_rgbd': False,
     }
 
@@ -60,11 +61,12 @@ def generate_launch_description():
         'subscribe_rgb': False,
         'frame_id': "base_link",
         'map_frame_id': "map",
-        'sync_queue_size': 10,
+        'sync_queue_size': 50,
         'publish_tf': True,
-        'tf_delay': 0.05,
+        'tf_delay': 0.20,
         'tf_prefix': "",
         'approx_sync': True,
+        'approx_sync_max_interval': 0.03,
         'odom_sensor_sync': False,
         'use_sim_time': False,
     }
