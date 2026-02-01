@@ -112,7 +112,11 @@ def generate_launch_description():
                 'config',
                 'imu_calib.yaml'
             ])
-        }]
+        }],
+        remappings=[
+            ('/raw', '/imu/data_raw'),
+            ('/corrected', '/imu/data'),
+        ]
     )
 
     return LaunchDescription([
