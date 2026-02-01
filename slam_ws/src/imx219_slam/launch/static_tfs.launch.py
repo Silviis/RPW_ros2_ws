@@ -72,7 +72,7 @@ def generate_launch_description():
             '0.0', '0.0', '0.0',
             '-0.5', '0.5', '-0.5', '0.5',
             'cam0_link',
-            'cam0_optical',
+            'imx_219_left_link',
         ]
     )
 
@@ -87,7 +87,7 @@ def generate_launch_description():
             '0.0', '0.0', '0.0',
             '-0.5', '0.5', '-0.5', '0.5',
             'cam1_link',
-            'cam1_optical',
+            'imx_219_right_link',
         ]
     )
 
