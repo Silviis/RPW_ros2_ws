@@ -33,23 +33,26 @@ public:
             "");
 
         // Initialize cameras
-        cam0_ = std::make_unique<VideoCapture>(
+        cam0_ = std::make_unique<cv::VideoCapture>(
             "nvarguscamerasrc sensor-id=0 ! "
             "video/x-raw(memory:NVMM), width=640, height=480, framerate=30/1 ! "
             "nvvidconv flip-method=2 ! "
-            "video/x-raw, format=RGB ! "
+            "video/x-raw, format=BGRx ! "
             "videoconvert ! "
+            "video/x-raw, format=BGR ! "
             "appsink drop=true sync=false",
             cv::CAP_GSTREAMER);
 
-        cam1_ = std::make_unique<VideoCapture>(
+        cam1_ = std::make_unique<cv::VideoCapture>(
             "nvarguscamerasrc sensor-id=1 ! "
             "video/x-raw(memory:NVMM), width=640, height=480, framerate=30/1 ! "
             "nvvidconv flip-method=2 ! "
-            "video/x-raw, format=RGB ! "
+            "video/x-raw, format=BGRx ! "
             "videoconvert ! "
+            "video/x-raw, format=BGR ! "
             "appsink drop=true sync=false",
             cv::CAP_GSTREAMER);
+
 
 
         if (!cam0_->isOpened())
@@ -321,10 +324,16 @@ private:
         right_header.stamp = right_stamp;
         right_header.frame_id = "imx_219_right_link";
 
-        sensor_msgs::msg::Image::SharedPtr imageLeftMsg =
-            cv_bridge::CvImage(left_header, "rgb8", cam0Frame).toImageMsg();
-        sensor_msgs::msg::Image::SharedPtr imageRightMsg =
-            cv_bridge::CvImage(right_header, "rgb8", cam1Frame).toImageMsg();
+        cv::Mat cam0_rgb, cam1_rgb;
+        cv::cvtColor(cam0Frame, cam0_rgb, cv::COLOR_BGR2RGB);
+        cv::cvtColor(cam1Frame, cam1_rgb, cv::COLOR_BGR2RGB);
+
+        auto imageLeftMsg =
+            cv_bridge::CvImage(left_header, "rgb8", cam0_rgb).toImageMsg();
+
+        auto imageRightMsg =
+            cv_bridge::CvImage(right_header, "rgb8", cam1_rgb).toImageMsg();
+
 
         // attach stamps to camera_info and publish them
         camera_info_left_.header.stamp = left_stamp;
