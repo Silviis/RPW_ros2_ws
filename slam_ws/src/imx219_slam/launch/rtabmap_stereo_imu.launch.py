@@ -49,7 +49,8 @@ def generate_launch_description():
         'approx_sync': True,
         'approx_sync_max_interval': 0.03,
         'subscribe_rgbd': False,
-        'Odom/Strategy': '5'
+        'Odom/Strategy': '9',
+        'OdomVINS/ConfigPath': '/workspaces/RPW_vislam/slam_ws/src/imx219_slam/config/vins_config.yaml'
     }
 
     slam_parameters = {
