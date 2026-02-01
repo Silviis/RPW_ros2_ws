@@ -49,6 +49,7 @@ def generate_launch_description():
         'approx_sync': True,
         'approx_sync_max_interval': 0.03,
         'subscribe_rgbd': False,
+        'Odom/Strategy': '5'
     }
 
     slam_parameters = {
