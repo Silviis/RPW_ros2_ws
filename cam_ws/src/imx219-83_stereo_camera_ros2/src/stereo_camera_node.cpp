@@ -98,36 +98,47 @@ public:
         pub_left_info_ = this->create_publisher<sensor_msgs::msg::CameraInfo>("/stereo/left/camera_info", 1);
         pub_right_info_ = this->create_publisher<sensor_msgs::msg::CameraInfo>("/stereo/right/camera_info", 1);
 
-        // read file paths from parameters (overrides the compile-time/static paths)
-        std::string left_ini = this->get_parameter("left_ini").as_string();
-        std::string right_ini = this->get_parameter("right_ini").as_string();
+        // Hard-coded CameraInfo values (from left.ini / right.ini)
+        // LEFT
+        camera_info_left_ = sensor_msgs::msg::CameraInfo();
+        camera_info_left_.header.frame_id = "imx_219_left_link";
+        camera_info_left_.width = 640;
+        camera_info_left_.height = 480;
+        camera_info_left_.distortion_model = "plumb_bob";
+        camera_info_left_.d = {-0.042341, 0.188809, 0.002007, -0.001397, 0.0};
+        // K (row-major)
+        camera_info_left_.k[0] = 578.150101; camera_info_left_.k[1] = 0.0;        camera_info_left_.k[2] = 317.685694;
+        camera_info_left_.k[3] = 0.0;        camera_info_left_.k[4] = 771.864750; camera_info_left_.k[5] = 240.599903;
+        camera_info_left_.k[6] = 0.0;        camera_info_left_.k[7] = 0.0;        camera_info_left_.k[8] = 1.0;
+        // R
+        camera_info_left_.r[0]=0.997598; camera_info_left_.r[1]=-0.040442; camera_info_left_.r[2]=-0.056232;
+        camera_info_left_.r[3]=0.040156; camera_info_left_.r[4]=0.999174;  camera_info_left_.r[5]=-0.006198;
+        camera_info_left_.r[6]=0.056437; camera_info_left_.r[7]=0.003925;  camera_info_left_.r[8]=0.998398;
+        // P (3x4)
+        camera_info_left_.p[0]=888.815717; camera_info_left_.p[1]=0.0;        camera_info_left_.p[2]=362.861237; camera_info_left_.p[3]=0.0;
+        camera_info_left_.p[4]=0.0;        camera_info_left_.p[5]=888.815717; camera_info_left_.p[6]=253.260841; camera_info_left_.p[7]=0.0;
+        camera_info_left_.p[8]=0.0;        camera_info_left_.p[9]=0.0;        camera_info_left_.p[10]=1.0;       camera_info_left_.p[11]=0.0;
 
-        if (left_ini.empty())
-        {
-            RCLCPP_WARN(this->get_logger(), "Parameter left_ini is empty. Left camera_info will be empty.");
-        }
-        else
-        {
-            bool left_ok = parseIniToCameraInfo(left_ini, camera_info_left_, "imx_219_left_link");
-            if (!left_ok)
-            {
-                RCLCPP_WARN(this->get_logger(), "Failed to parse left ini '%s'", left_ini.c_str());
-            }
-        }
-
-        if (right_ini.empty())
-        {
-            RCLCPP_WARN(this->get_logger(), "Parameter right_ini is empty. Right camera_info will be empty.");
-        }
-        else
-        {
-            bool right_ok = parseIniToCameraInfo(right_ini, camera_info_right_, "imx_219_right_link");
-            if (!right_ok)
-            {
-                RCLCPP_WARN(this->get_logger(), "Failed to parse right ini '%s'", right_ini.c_str());
-            }
-        }
-
+        // RIGHT
+        camera_info_right_ = sensor_msgs::msg::CameraInfo();
+        camera_info_right_.header.frame_id = "imx_219_right_link";
+        camera_info_right_.width = 640;
+        camera_info_right_.height = 480;
+        camera_info_right_.distortion_model = "plumb_bob";
+        camera_info_right_.d = {-0.070246, 0.331961, 0.002207, -0.001475, 0.0};
+        // K
+        camera_info_right_.k[0] = 574.116424; camera_info_right_.k[1] = 0.0;        camera_info_right_.k[2] = 307.087843;
+        camera_info_right_.k[3] = 0.0;        camera_info_right_.k[4] = 766.076052; camera_info_right_.k[5] = 263.691838;
+        camera_info_right_.k[6] = 0.0;        camera_info_right_.k[7] = 0.0;        camera_info_right_.k[8] = 1.0;
+        // R
+        camera_info_right_.r[0]=0.998057; camera_info_right_.r[1]=-0.036558; camera_info_right_.r[2]=-0.050451;
+        camera_info_right_.r[3]=0.036814; camera_info_right_.r[4]=0.999314;  camera_info_right_.r[5]=0.004137;
+        camera_info_right_.r[6]=0.050265; camera_info_right_.r[7]=-0.005987; camera_info_right_.r[8]=0.998718;
+        // P
+        camera_info_right_.p[0]=888.815717; camera_info_right_.p[1]=0.0;        camera_info_right_.p[2]=362.861237; camera_info_right_.p[3]=-51.697515;
+        camera_info_right_.p[4]=0.0;        camera_info_right_.p[5]=888.815717; camera_info_right_.p[6]=253.260841; camera_info_right_.p[7]=0.0;
+        camera_info_right_.p[8]=0.0;        camera_info_right_.p[9]=0.0;        camera_info_right_.p[10]=1.0;      camera_info_right_.p[11]=0.0;
+ 
         // Create timer for publishing at ~50 Hz (20 ms)
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(50),
@@ -152,138 +163,6 @@ public:
     }
 
 private:
-    // Helper utilities for parsing
-    static inline std::string trim(const std::string &s)
-    {
-        auto start = s.find_first_not_of(" \t\r\n");
-        if (start == std::string::npos) return "";
-        auto end = s.find_last_not_of(" \t\r\n");
-        return s.substr(start, end - start + 1);
-    }
-
-    static inline std::vector<std::string> split_tokens(const std::string &s)
-    {
-        std::istringstream iss(s);
-        std::vector<std::string> out;
-        std::string tok;
-        while (iss >> tok) out.push_back(tok);
-        return out;
-    }
-
-    bool parseIniToCameraInfo(const std::string &path, sensor_msgs::msg::CameraInfo &ci, const std::string &frame_id)
-    {
-        std::ifstream ifs(path);
-        if (!ifs.is_open())
-        {
-            RCLCPP_ERROR(this->get_logger(), "Failed to open camera info file: %s", path.c_str());
-            return false;
-        }
-
-        ci = sensor_msgs::msg::CameraInfo();
-        ci.header.frame_id = frame_id;
-        ci.distortion_model = "plumb_bob";
-
-        std::string line;
-        while (std::getline(ifs, line))
-        {
-            line = trim(line);
-            if (line.empty()) continue;
-            // keys are single words like "width", "height", "camera matrix", "distortion", "rectification", "projection"
-            if (line == "width")
-            {
-                // next non-empty line is width value
-                while (std::getline(ifs, line) && trim(line).empty()) {}
-                if (!ifs) break;
-                ci.width = std::stoi(trim(line));
-            }
-            else if (line == "height")
-            {
-                while (std::getline(ifs, line) && trim(line).empty()) {}
-                if (!ifs) break;
-                ci.height = std::stoi(trim(line));
-            }
-            else if (line == "camera matrix")
-            {
-                // read 3 rows
-                std::vector<double> K;
-                for (int r = 0; r < 3; ++r)
-                {
-                    if (!std::getline(ifs, line)) break;
-                    line = trim(line);
-                    if (line.empty()) { --r; continue; }
-                    auto toks = split_tokens(line);
-                    for (auto &t : toks) K.push_back(std::stod(t));
-                }
-                if (K.size() == 9)
-                {
-                    for (int i = 0; i < 9; ++i) ci.k[i] = K[i];
-                }
-            }
-            else if (line == "distortion")
-            {
-                // single line with coefficients
-                while (std::getline(ifs, line) && trim(line).empty()) {}
-                if (!ifs) break;
-                auto toks = split_tokens(trim(line));
-                ci.d.clear();
-                for (auto &t : toks) ci.d.push_back(std::stod(t));
-            }
-            else if (line == "rectification")
-            {
-                std::vector<double> R;
-                for (int r = 0; r < 3; ++r)
-                {
-                    if (!std::getline(ifs, line)) break;
-                    line = trim(line);
-                    if (line.empty()) { --r; continue; }
-                    auto toks = split_tokens(line);
-                    for (auto &t : toks) R.push_back(std::stod(t));
-                }
-                if (R.size() == 9)
-                {
-                    for (int i = 0; i < 9; ++i) ci.r[i] = R[i];
-                }
-            }
-            else if (line == "projection")
-            {
-                std::vector<double> P;
-                for (int r = 0; r < 3; ++r)
-                {
-                    if (!std::getline(ifs, line)) break;
-                    line = trim(line);
-                    if (line.empty()) { --r; continue; }
-                    auto toks = split_tokens(line);
-                    for (auto &t : toks) P.push_back(std::stod(t));
-                }
-                if (P.size() == 12)
-                {
-                    for (int i = 0; i < 12; ++i) ci.p[i] = P[i];
-                }
-            }
-        }
-
-        // if K not set from file, try to fill from projection P (fx = P[0], fy = P[5], cx = P[2], cy = P[6])
-        bool K_valid = true;
-        for (int i = 0; i < 9; ++i) if (ci.k[i] == 0.0) { K_valid = false; break; }
-        if (!K_valid)
-        {
-            if (ci.p[0] != 0.0 || ci.p[5] != 0.0)
-            {
-                ci.k[0] = ci.p[0];
-                ci.k[1] = 0.0;
-                ci.k[2] = ci.p[2];
-                ci.k[3] = 0.0;
-                ci.k[4] = ci.p[5];
-                ci.k[5] = ci.p[6];
-                ci.k[6] = 0.0;
-                ci.k[7] = 0.0;
-                ci.k[8] = 1.0;
-            }
-        }
-
-        return true;
-    }
-
     void timer_callback()
     {
         Mat cam0Frame;
