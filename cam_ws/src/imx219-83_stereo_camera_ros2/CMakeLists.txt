@@ -11,20 +11,44 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 # Include directories
-include_directories(include launch)
+include_directories(
+  include
+  launch
+  ${OpenCV_INCLUDE_DIRS}
+)
+
+# Create executable
+add_executable(stereo_camera_node src/stereo_camera_node.cpp)
 
 # Create executable
 add_executable(icm20948_node src/icm20948_node.cpp)
+
 # Link libraries
+target_link_libraries(stereo_camera_node
+  ${OpenCV_LIBS}
+)
 
 # Add dependencies
 ament_target_dependencies(icm20948_node
   rclcpp
   sensor_msgs
 )
+
+ament_target_dependencies(stereo_camera_node
+  rclcpp
+  image_transport
+  cv_bridge
+  sensor_msgs
+  std_msgs
+)
 # Install executable
 install(TARGETS
   icm20948_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS
+  stereo_camera_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

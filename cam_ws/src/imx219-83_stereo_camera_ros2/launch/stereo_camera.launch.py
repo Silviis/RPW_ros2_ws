@@ -14,6 +14,13 @@ def generate_launch_description():
         'stereo_camera.yaml'
     ])
 
+    stereo_cam_publisher = Node(
+        package='imx219-83_stereo_camera_ros2',
+        executable='stereo_camera_node',
+        name='stereo_camera_node',
+        output='screen'
+    )
+
     # =======================
     # GSCAM nodes
     # =======================
@@ -93,9 +100,10 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        left_camera_publisher,
-        right_camera_publisher,
-        rectification,
+        # left_camera_publisher,
+        # right_camera_publisher,
+        # rectification,
+        stereo_cam_publisher,
         imu_publisher,
         imu_rectifier
     ])
