@@ -12,12 +12,12 @@ def generate_launch_description():
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='base_to_camera',
+            name='base_to_imu',
             arguments=[
                 '0.0', '0.0', '0.0',   # x y z (meters)
-                '0.0', '0.0', '0.0', '1.0',  # qx qy qz qw
+                '-0.5', '0.5', '-0.5', '0.5',  # qx qy qz qw
                 'base_link',
-                'camera_link'
+                'imu_link'
             ]
         ),
 
@@ -29,9 +29,9 @@ def generate_launch_description():
             executable='static_transform_publisher',
             name='camera_to_left_optical',
             arguments=[
-                '0.0', '0.0', '0.0',
-                '-0.5', '0.5', '-0.5', '0.5',  # optical frame rotation
-                'camera_link',
+                '0.0345', '0.0', '0.0',
+                '0.0', '0.0', '0.0', '1.0',
+                'imu_link',
                 'imx_219_left_link'
             ]
         ),
@@ -44,11 +44,10 @@ def generate_launch_description():
             executable='static_transform_publisher',
             name='camera_to_right_optical',
             arguments=[
-                '0.0618', '0.0', '0.0',  # baseline (meters!)
-                '-0.5', '0.5', '-0.5', '0.5',
-                'camera_link',
+                '-0.0345', '0.0', '0.0',  # baseline (meters!)
+                '0.0', '0.0', '0.0', '1.0'
+                'imu_link',
                 'imx_219_right_link'
             ]
         ),
-
     ])
