@@ -195,10 +195,10 @@ private:
         //cv::cvtColor(cam1Frame, cam1_rgb, cv::COLOR_BGR2RGB);
 
         auto imageLeftMsg =
-            cv_bridge::CvImage(left_header, "mono8", cam0_rgb).toImageMsg();
+            cv_bridge::CvImage(left_header, "gray", cam0_rgb).toImageMsg();
 
         auto imageRightMsg =
-            cv_bridge::CvImage(right_header, "mono8", cam1_rgb).toImageMsg();
+            cv_bridge::CvImage(right_header, "gray", cam1_rgb).toImageMsg();
 
 
         // attach stamps to camera_info and publish them
