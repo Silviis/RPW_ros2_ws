@@ -3,29 +3,63 @@ FROM osrf/ros:humble-desktop-full
 ARG USERNAME=ros
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+ENV DEBIAN_FRONTEND=noninteractive
+ENV VISLAM_WS=/opt/vislam_ws
 
-# Set your ZSH theme here
-ARG ZSH_THEME=agnoster
+# ---------- User ----------
+RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi && \
+    groupadd --gid $USER_GID $USERNAME && \
+    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME && \
+    apt-get update && apt-get install -y sudo && \
+    echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
+    chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Add new user as a sudoer.
-RUN if id -u $USER_UID ; then userdel `id -un $USER_UID` ; fi
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    #
-    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-    && apt-get update \
-    && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+# ---------- Dependencies ----------
+RUN apt-get update && apt-get install -y \
+    git \
+    cmake \
+    build-essential \
+    python3-colcon-common-extensions \
+    python3-rosdep \
+    libopencv-dev \
+    libeigen3-dev \
+    libboost-all-dev
 
-# General tools & libraries
-RUN apt update && apt install -y nano net-tools ncat zsh git curl wget iproute2 python3-pip python3-wheel
+RUN rosdep init || true
+RUN rosdep update
 
-# GStreamer dependencies
-RUN apt install -y gstreamer1.0-tools libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev gstreamer1.0-plugins-good
+# ---------- Workspace ----------
+WORKDIR ${VISLAM_WS}
+RUN mkdir -p src
 
+# ---------- Clone repos ----------
+WORKDIR ${VISLAM_WS}/src
+RUN git clone https://github.com/Silviis/VINS-Fusion-ROS2.git && \
+    git clone https://github.com/Silviis/rtabmap.git && \
+    git clone https://github.com/Silviis/rtabmap_ros.git
+
+# ---------- Install ROS deps ----------
+WORKDIR ${VISLAM_WS}
+RUN rosdep install --from-paths src --ignore-src -r -y
+
+# =========================================================
+# PHASE 1: Build VINS-Fusion only
+# =========================================================
+RUN . /opt/ros/humble/setup.sh && \
+    MAKEFLAGS="-j2" colcon build --packages-select camera_models global_fusion loop_fusion vins  --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+# =========================================================
+# PHASE 2: Build rtabmap WITH VINS support
+# =========================================================
+RUN . /opt/ros/humble/setup.sh && \
+    . ${VISLAM_WS}/install/setup.sh && \
+    MAKEFLAGS="-j2" colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TOOLS=OFF
+
+# ---------- Runtime user ----------
 USER $USERNAME
-RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /home/$USERNAME/.bashrc  # Source ROS installation
-RUN echo "FILE=/workspaces/RPW_vislam/cam_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source cam_ws
-RUN echo "FILE=/workspaces/RPW_vislam/slam_ws/install/setup.bash && test -f \$FILE && source \$FILE" >> /home/$USERNAME/.bashrc  # Source slam_ws
-RUN sudo chsh -s /bin/bash ${USERNAME}
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/$USERNAME/.bashrc && \
+    echo "source ${VISLAM_WS}/install/setup.bash" >> /home/$USERNAME/.bashrc && \
+    echo "cd ${VISLAM_WS}" >> /home/$USERNAME/.bashrc
+
+CMD ["bash"]
+
