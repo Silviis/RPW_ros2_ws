@@ -54,7 +54,7 @@ RUN . /opt/ros/humble/setup.sh && \
 # =========================================================
 RUN . /opt/ros/humble/setup.sh && \
     . ${VISLAM_WS}/install/setup.sh && \
-    MAKEFLAGS="-j4" colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+    MAKEFLAGS="-j4" colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TOOLS=OFF
 
 # ---------- Runtime user ----------
 USER $USERNAME
