@@ -38,3 +38,4 @@ jobs:
             -f RPW_vislam/docker/Dockerfile.slam \
             -t silviis/rpw-vislam-slam:latest \
             --push .
+
