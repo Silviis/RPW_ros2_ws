@@ -43,7 +43,7 @@ def generate_launch_description():
         'guess_min_translation': 0.0,
         'guess_min_rotation': 0.0,
         'config_path': "",
-        'wait_imu_to_init': False,
+        'wait_imu_to_init': True,
         'use_sim_time': False,
         # Stereo odom params
         'approx_sync': True,
