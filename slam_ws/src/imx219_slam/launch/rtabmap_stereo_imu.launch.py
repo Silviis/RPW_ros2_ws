@@ -63,12 +63,12 @@ def generate_launch_description():
         'subscribe_rgb': False,
         'frame_id': "base_link",
         'map_frame_id': "map",
-        'sync_queue_size': 50,
+        'sync_queue_size': 10,
         'publish_tf': True,
-        'tf_delay': 0.20,
+        'tf_delay': 0.10,
         'tf_prefix': "",
         'approx_sync': True,
-        'approx_sync_max_interval': 0.03,
+        'approx_sync_max_interval': 0.01,
         'odom_sensor_sync': False,
         'use_sim_time': False,
     }
@@ -115,6 +115,6 @@ def generate_launch_description():
         madgwick_filter,
         tf_launch,
         stereo_odom,
-        # rtabmap,
+        rtabmap,
         # rtabmap_viz
     ])
