@@ -37,9 +37,7 @@ public:
             "nvarguscamerasrc sensor-id=0 ! "
             "video/x-raw(memory:NVMM), width=640, height=480, framerate=30/1 ! "
             "nvvidconv flip-method=2 ! "
-            "video/x-raw, format=BGRx ! "
-            "videoconvert ! "
-            "video/x-raw, format=BGR ! "
+            "video/x-raw, format=GRAY8 ! "
             "appsink drop=true sync=true",
             cv::CAP_GSTREAMER);
 
@@ -47,9 +45,8 @@ public:
             "nvarguscamerasrc sensor-id=1 ! "
             "video/x-raw(memory:NVMM), width=640, height=480, framerate=30/1 ! "
             "nvvidconv flip-method=2 ! "
-            "video/x-raw, format=BGRx ! "
+            "video/x-raw, format=GRAY8 ! "
             "videoconvert ! "
-            "video/x-raw, format=BGR ! "
             "appsink drop=true sync=true",
             cv::CAP_GSTREAMER);
 
@@ -194,14 +191,14 @@ private:
         right_header.frame_id = "imx_219_right_link";
 
         cv::Mat cam0_rgb, cam1_rgb;
-        cv::cvtColor(cam0Frame, cam0_rgb, cv::COLOR_BGR2RGB);
-        cv::cvtColor(cam1Frame, cam1_rgb, cv::COLOR_BGR2RGB);
+        //cv::cvtColor(cam0Frame, cam0_rgb, cv::COLOR_BGR2RGB);
+        //cv::cvtColor(cam1Frame, cam1_rgb, cv::COLOR_BGR2RGB);
 
         auto imageLeftMsg =
-            cv_bridge::CvImage(left_header, "rgb8", cam0_rgb).toImageMsg();
+            cv_bridge::CvImage(left_header, "mono8", cam0_rgb).toImageMsg();
 
         auto imageRightMsg =
-            cv_bridge::CvImage(right_header, "rgb8", cam1_rgb).toImageMsg();
+            cv_bridge::CvImage(right_header, "mono8", cam1_rgb).toImageMsg();
 
 
         // attach stamps to camera_info and publish them
