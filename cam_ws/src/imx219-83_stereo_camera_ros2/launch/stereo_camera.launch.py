@@ -75,7 +75,7 @@ def generate_launch_description():
     # =======================
     # Image rectification
     # =======================
-    rectification = IncludeLaunchDescription(
+    stereo_camera_proc = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
                 FindPackageShare('stereo_image_proc'),
@@ -89,6 +89,16 @@ def generate_launch_description():
             'launch_image_proc': 'true',
             'approximate_sync': 'true'
         }.items()
+    )
+
+    image_proc = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('imx219-83_stereo_camera_ros2'),
+                'launch',
+                'image_proc.launch.py'
+            ])
+        ])
     )
 
     # =======================
@@ -122,7 +132,7 @@ def generate_launch_description():
     return LaunchDescription([
         # left_camera_publisher,
         # right_camera_publisher,
-        rectification,
+        image_proc,
         stereo_cam_publisher,
         imu_publisher,
         # imu_rectifier
