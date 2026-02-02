@@ -46,7 +46,6 @@ public:
             "video/x-raw(memory:NVMM), width=640, height=480, framerate=30/1 ! "
             "nvvidconv flip-method=2 ! "
             "video/x-raw, format=GRAY8 ! "
-            "videoconvert ! "
             "appsink drop=true sync=true",
             cv::CAP_GSTREAMER);
 
@@ -195,10 +194,19 @@ private:
         //cv::cvtColor(cam1Frame, cam1_rgb, cv::COLOR_BGR2RGB);
 
         auto imageLeftMsg =
-            cv_bridge::CvImage(left_header, "gray", cam0_rgb).toImageMsg();
+            cv_bridge::CvImage(
+                left_header,
+                sensor_msgs::image_encodings::MONO8,
+                cam0Frame
+            ).toImageMsg();
 
         auto imageRightMsg =
-            cv_bridge::CvImage(right_header, "gray", cam1_rgb).toImageMsg();
+            cv_bridge::CvImage(
+                right_header,
+                sensor_msgs::image_encodings::MONO8,
+                cam1Frame
+            ).toImageMsg();
+
 
 
         // attach stamps to camera_info and publish them
