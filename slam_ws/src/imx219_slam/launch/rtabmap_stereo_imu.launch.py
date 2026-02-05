@@ -71,6 +71,20 @@ def generate_launch_description():
         'approx_sync_max_interval': 0.01,
         'odom_sensor_sync': False,
         'use_sim_time': False,
+        # SLAM algorithm params
+        'Rtabmap/DetectionRate': "1",
+        # Features
+        'Kp/MaxFeatures': "350",
+        'Kp/GridRows': "3",
+        'Kp/GridCols': "4",
+        # Memory
+        'Mem/STMSize': "30",
+        'Mem/RehearsalSimilarity': "0.3",
+        'Mem/RecentWmRatio': "0.1",
+        # Mapping
+        'Grid/RangeMax': "4.0",
+        'Grid/CellSize': "0.05",
+        'Grid/DepthDecimation': "4",
     }
 
     remappings = [
@@ -116,5 +130,5 @@ def generate_launch_description():
         tf_launch,
         stereo_odom,
         rtabmap,
-        # rtabmap_viz
+        #rtabmap_viz
     ])
