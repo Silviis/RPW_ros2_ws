@@ -8,22 +8,13 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
 
+    # =======================
+    # Stereo camera publisher
+    # =======================
     camera_params = PathJoinSubstitution([
         FindPackageShare('imx219-83_stereo_camera_ros2'),
         'config',
-        'stereo_camera.yaml'
-    ])
-
-    # paths to left/right ini files (passed as params to the stereo node)
-    left_ini_path = PathJoinSubstitution([
-        FindPackageShare('imx219-83_stereo_camera_ros2'),
-        'config',
-        'left.ini'
-    ])
-    right_ini_path = PathJoinSubstitution([
-        FindPackageShare('imx219-83_stereo_camera_ros2'),
-        'config',
-        'right.ini'
+        'cameras.yaml'
     ])
 
     stereo_cam_publisher = Node(
@@ -31,66 +22,12 @@ def generate_launch_description():
         executable='stereo_camera_node',
         name='stereo_camera_node',
         output='screen',
-        parameters=[{
-            'left_ini': left_ini_path,
-            'right_ini': right_ini_path
-        }]
-    )
-
-    # =======================
-    # GSCAM nodes
-    # =======================
-    left_camera_publisher = Node(
-        package='gscam',
-        executable='gscam_node',
-        name='imx_219_left',
-        parameters=[camera_params],
-        remappings=[
-            ('/camera/image_raw', '/stereo/left/image_raw'),
-            ('/camera/camera_info', '/stereo/left/camera_info'),
-            ('/camera/image_raw/compressed',
-             '/stereo/left/image_raw/compressed'),
-            ('/camera/image_raw/compressedDepth',
-             '/stereo/left/image_raw/compressedDepth'),
-        ],
-        output='screen'
-    )
-
-    right_camera_publisher = Node(
-        package='gscam',
-        executable='gscam_node',
-        name='imx_219_right',
-        parameters=[camera_params],
-        remappings=[
-            ('/camera/image_raw', '/stereo/right/image_raw'),
-            ('/camera/camera_info', '/stereo/right/camera_info'),
-            ('/camera/image_raw/compressed',
-             '/stereo/right/image_raw/compressed'),
-            ('/camera/image_raw/compressedDepth',
-             '/stereo/right/image_raw/compressedDepth'),
-        ],
-        output='screen'
+        parameters=[camera_params]
     )
 
     # =======================
     # Image rectification
     # =======================
-    stereo_camera_proc = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare('stereo_image_proc'),
-                'launch',
-                'stereo_image_proc.launch.py'
-            ])
-        ]),
-        launch_arguments={
-            'left_namespace': '/stereo/left',
-            'right_namespace': '/stereo/right',
-            'launch_image_proc': 'true',
-            'approximate_sync': 'true'
-        }.items()
-    )
-
     image_proc = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -111,29 +48,8 @@ def generate_launch_description():
         output='screen'
     )
 
-    imu_rectifier = Node(
-        package='imu_calib',
-        executable='apply_calib_node',
-        name='imu_rectifier_node',
-        output='screen',
-        parameters=[{
-            'calib_file': PathJoinSubstitution([
-                FindPackageShare('imx219-83_stereo_camera_ros2'),
-                'config',
-                'imu_calib.yaml'
-            ])
-        }],
-        remappings=[
-            ('/raw', '/imu/data_raw'),
-            ('/corrected', '/imu/data'),
-        ]
-    )
-
     return LaunchDescription([
-        # left_camera_publisher,
-        # right_camera_publisher,
-        image_proc,
         stereo_cam_publisher,
-        imu_publisher,
-        # imu_rectifier
+        image_proc,
+        imu_publisher
     ])
