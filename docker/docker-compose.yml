@@ -43,7 +43,7 @@ services:
     tty: true
     stdin_open: true
 
-    command: sleep infinity   # <-- keeps container running
+    command: bash -lc "/workspaces/RPW_vislam/slam_ws/entrypoint.sh"
 
     environment:
       - DISPLAY=${DISPLAY:-localhost:10.0}
