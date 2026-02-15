@@ -1,22 +1,17 @@
 services:
   ros2_cam:
-    build:
-      context: .
-      dockerfile: Dockerfile.camera
+    image: silviis/rpw-vislam-camera:latest
     container_name: ros2_stereo_cam
     runtime: nvidia
     privileged: true
     network_mode: host
     ipc: host
-
     tty: true
     stdin_open: true
 
     command: bash -lc "/workspaces/RPW_vislam/cam_ws/entrypoint.sh"
 
     environment:
-      - DISPLAY=${DISPLAY:-localhost:10.0}
-      - XAUTHORITY=${XAUTHORITY}
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
       - GST_PLUGIN_PATH=/usr/lib/aarch64-linux-gnu/gstreamer-1.0
@@ -24,7 +19,6 @@ services:
 
     volumes:
       - /tmp/argus_socket:/tmp/argus_socket
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev:/dev:rw
       - /sys:/sys:ro
       - ../:/workspaces/RPW_vislam:rw
@@ -35,28 +29,16 @@ services:
   ros2_slam:
     image: silviis/rpw-vislam-slam:latest   # pull from Docker Hub
     container_name: ros2_slam
-    runtime: nvidia
-    privileged: true
     network_mode: host
     ipc: host
-
     tty: true
     stdin_open: true
 
     command: bash -lc "/workspaces/RPW_vislam/slam_ws/entrypoint.sh"
 
     environment:
-      - DISPLAY=${DISPLAY:-localhost:10.0}
-      - XAUTHORITY=${XAUTHORITY}
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=all
       - ROS_DOMAIN_ID=0
-      - GST_PLUGIN_PATH=/usr/lib/aarch64-linux-gnu/gstreamer-1.0
-      - LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu:/usr/local/lib:${LD_LIBRARY_PATH}
 
     volumes:
-      - /tmp/argus_socket:/tmp/argus_socket
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - /dev:/dev:rw
-      - /sys:/sys:ro
       - ../:/workspaces/RPW_vislam:rw
